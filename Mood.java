@@ -27,7 +27,10 @@ public class Mood
 	protected double calculateAmount(){
 		
 		double negativesTotal = anger.amount + sadness.amount + disgust.amount + fear.amount;
+		double negativeModulator = negativesTotal/4;
 		
-		return amount;
+		double amountMood = happiness.amount - negativeModulator;
+		
+		return amountMood;
 	}
 }
