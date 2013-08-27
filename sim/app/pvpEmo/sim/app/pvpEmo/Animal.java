@@ -28,6 +28,8 @@ public abstract class Animal implements Steppable {
 	protected Disgust dis;
 	protected Fear fear;
 	protected Happiness happy;
+	protected Surprise surprise;
+	protected Mood mood;
 	protected int reproductionAge;
 	protected static double expectMapDecayRate;
 	protected int velocity = 1;

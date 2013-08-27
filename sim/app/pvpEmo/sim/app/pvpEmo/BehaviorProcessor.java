@@ -9,7 +9,30 @@ public class BehaviorProcessor {
 
 	private SparseGrid2D world;
 	private int direct;
-	
+	private Anger anger1;
+	private Anger anger2;
+	private Anger anger;
+	private Sadness sadness1;
+	private Sadness sadness2;
+	private Sadness sadness;
+	private Disgust disgust1;
+	private Disgust disgust2;
+	private Disgust disgust;
+	private Fear fear1;
+	private Fear fear2;
+	private Fear fear;
+	private Happiness happy1;
+	private Happiness happy2;
+	private Happiness happy;
+	private Surprise surprise1;
+	private Surprise surprise2;
+	private Surprise surprise;
+	private Int2D pLoc2;
+	private Int2D pLoc1;
+	private Int2D pLoc;
+	private Mood mood2;
+	private Mood mood1;
+	private Mood mood;
 	
 
 	//Sends in arguments of a Bag of items, and probability of movement, returns array of new probabilites
@@ -27,12 +50,16 @@ public class BehaviorProcessor {
 		direct = predator.direction;
 		double[] newProb = new double[8];
 		
+		//Emotions Update
+		
+		
+		
 		for(int i = 0; i < oldProb.length; i++){
 			//System.out.println("oldProb[i]: " + oldProb[i]);
 			newProb[i] = oldProb[i];
 		}
 	
-		
+		this.updateEmotionState(predator, newProb, oldProb);
 		
 		Bag sLocations = new Bag();
 		Bag fLocations = new Bag();
@@ -93,7 +120,7 @@ public class BehaviorProcessor {
 			newProb[i] = oldProb[i];
 		}
 	
-		
+		this.updateEmotionState(prey, newProb, oldProb);
 		
 		Bag sLocations = new Bag();
 		Bag fLocations = new Bag();
@@ -951,7 +978,7 @@ public class BehaviorProcessor {
 		
 	}// end of method
 	
-	public void avoidanceProbability(Bag locations, double[]newProb, double[]oldProb, Prey p){
+	public void avoidanceProbability(Bag locations, double[]newProb, double[]oldProb, Animal p){
 		
 		Bag oldRewardLoc = new Bag();
 		
@@ -1042,21 +1069,98 @@ public class BehaviorProcessor {
 		double fearAmount = p.fear.amount;
 		double disgustAmount = p.dis.amount;
 		
-		System.out.println("EatingChance Before: " + p.eatingChance);
-		System.out.println("RepNum Before: " + p.repRandNum);
+		//System.out.println("EatingChance Before: " + p.eatingChance);
+		//System.out.println("RepNum Before: " + p.repRandNum);
 		int fearRepNum = p.repRandNum*(int)(fearAmount *100);
 		int disgustRepNum = p.repRandNum*(int)(disgustAmount * 100);
 		int averageRepNum= (fearRepNum + disgustRepNum)/20;
-		System.out.println("AverageRepNum" + averageRepNum);
-		assert(averageRepNum >=0);
-		p.repRandNum = averageRepNum;
+		//System.out.println("AverageRepNum" + averageRepNum);
+		if(averageRepNum > 0)
+			p.repRandNum = averageRepNum;
 		
 		
 		//Eating
 		double eatingChance = 1.0 - disgustAmount;
 		p.eatingChance = (int)eatingChance;
 		
-		System.out.println("EatingChance After: " + p.eatingChance);
-		System.out.println("RepNum After: " + p.repRandNum);
+		//System.out.println("EatingChance After: " + p.eatingChance);
+		//System.out.println("RepNum After: " + p.repRandNum);
+	}
+	
+	public void emotions(Prey p){
+		
+		//Reproduction
+		
+		double fearAmount = p.fear.amount;
+		double disgustAmount = p.dis.amount;
+		
+		//System.out.println("EatingChance Before: " + p.eatingChance);
+		//System.out.println("RepNum Before: " + p.repRandNum);
+		int fearRepNum = p.repRandNum*(int)(fearAmount *100);
+		int disgustRepNum = p.repRandNum*(int)(disgustAmount * 100);
+		int averageRepNum= (fearRepNum + disgustRepNum)/20;
+		//System.out.println("AverageRepNum" + averageRepNum);
+		if(averageRepNum > 0)
+			p.repRandNum = averageRepNum;
+		
+		
+		//Eating
+		double eatingChance = 1.0 - disgustAmount;
+		p.eatingChance = (int)eatingChance;
+		
+		//System.out.println("EatingChance After: " + p.eatingChance);
+		//System.out.println("RepNum After: " + p.repRandNum);
+	}
+	
+	public void updateEmotionState(Animal p, double[] newProb, double[] oldProb){
+		anger2 = anger1;
+		sadness2 = sadness1;
+		disgust2 = disgust1;
+		fear2 = fear1;
+		happy2 = happy1;
+		surprise2 = surprise1;
+		pLoc2 = pLoc1;
+		mood2 = mood1;
+		
+		anger1 = anger;
+		sadness1 = sadness;
+		disgust1 = disgust;
+		fear1 = fear;
+		happy1 = happy;
+		surprise1 = surprise;
+		pLoc1 = pLoc;
+		mood1 = mood;
+				
+		
+		anger = p.anger;
+		sadness = p.sad;
+		disgust = p.dis;
+		fear = p.fear;
+		happy = p.happy;
+		surprise = p.surprise;
+		pLoc = world.getObjectLocation(p);
+		mood = p.mood;
+		
+		//If one of the two locations is a movable location, then figure out the mood
+		//Based on positivity or negativity either rewardLocation or avoidanceLocation
+		Bag movable = new Bag();
+		Bag rewards = new Bag();
+		Bag avoid = new Bag();
+		movable = this.findMovableLocations(pLoc);
+		
+		for(int i = 0; i < movable.size(); i++){
+			if(pLoc2.equals((Int2D)movable.get(i)) && (mood2.amount > .5))
+				rewards.add(pLoc2);
+			else if (pLoc2.equals((Int2D) movable.get(i)) && (mood2.amount < .5))
+				avoid.add(pLoc2);
+			
+			if(pLoc1.equals((Int2D)movable.get(i)) && (mood1.amount > .5))
+				rewards.add(pLoc1);
+			else if (pLoc1.equals((Int2D) movable.get(i)) && (mood1.amount < .5))
+				avoid.add(pLoc1);
+		}
+		
+		this.rewardProbability(rewards, newProb, oldProb, p);
+		this.avoidanceProbability(avoid, newProb, oldProb, p);
 	}
 }// end of class

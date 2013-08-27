@@ -13,6 +13,7 @@ public class ExpectationMap {
 	protected double[][] poisonLocationMap;
 	protected int gWidth;
 	protected int gHeight;
+	protected int surpriseIncrease;
 	
 	public ExpectationMap(int gridWidth, int gridHeight, double decay){
 		foodLocationMap = new double[gridWidth][gridHeight];
@@ -28,6 +29,7 @@ public class ExpectationMap {
 
 	protected void updateMapsPred (Bag objects, SparseGrid2D grid){
 		
+		surpriseIncrease = 0;
 		this.decayMaps();
 		
 		for(int i = 0; i < objects.size(); i++){
@@ -37,10 +39,17 @@ public class ExpectationMap {
 				int x = grid.getObjectLocation(prey).x;
 				int y = grid.getObjectLocation(prey).y;
 				
+				if(foodLocationMap[x][y] == 0)
+					surpriseIncrease++;
+				
 				foodLocationMap[x][y] = 1.0;
 				
-				if(prey.isDiseased)
+				if(prey.isDiseased){
+					if(poisonLocationMap[x][y] == 0)
+						surpriseIncrease++;
+					
 					poisonLocationMap[x][y] = 1.0;
+				}
 					
 			}
 			
@@ -49,10 +58,16 @@ public class ExpectationMap {
 				int x = grid.getObjectLocation(pred).x;
 				int y = grid.getObjectLocation(pred).y;
 				
+				if(conspecificLocationMap[x][y] == 0)
+					surpriseIncrease++;
+				
 				conspecificLocationMap[x][y] = 1.0;
 				
-				if(pred.isDiseased)
+				if(pred.isDiseased){
+					if(poisonLocationMap[x][y] == 0)
+						surpriseIncrease++;
 					poisonLocationMap[x][y] = 1.0;
+				}
 			}
 			
 		}
@@ -119,10 +134,15 @@ public class ExpectationMap {
 				int x = grid.getObjectLocation(food).x;
 				int y = grid.getObjectLocation(food).y;
 				
+				if(foodLocationMap[x][y] == 0)
+					surpriseIncrease++;
 				foodLocationMap[x][y] = 1.0;
 				
-				if(food.isDiseased())
+				if(food.isDiseased()){
+					if(poisonLocationMap[x][y] == 0)
+						surpriseIncrease++;
 					poisonLocationMap[x][y] = 1.0;
+				}
 					
 			}
 			
@@ -130,6 +150,9 @@ public class ExpectationMap {
 				Predator pred = (Predator)o;
 				int x = grid.getObjectLocation(pred).x;
 				int y = grid.getObjectLocation(pred).y;
+				
+				if(predatorLocationMap[x][y] == 0)
+					surpriseIncrease++;
 				
 				predatorLocationMap[x][y] = 1.0;
 			}
@@ -139,6 +162,8 @@ public class ExpectationMap {
 				int x = grid.getObjectLocation(prey).x;
 				int y = grid.getObjectLocation(prey).y;
 				
+				if(conspecificLocationMap[x][y] == 0)
+					surpriseIncrease++;
 				conspecificLocationMap[x][y] = 1.0;
 			}
 			
