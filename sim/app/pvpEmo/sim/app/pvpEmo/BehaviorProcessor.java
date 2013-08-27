@@ -1068,6 +1068,7 @@ public class BehaviorProcessor {
 		
 		double fearAmount = p.fear.amount;
 		double disgustAmount = p.dis.amount;
+		double surpriseAmount = p.surprise.amount;
 		
 		//System.out.println("EatingChance Before: " + p.eatingChance);
 		//System.out.println("RepNum Before: " + p.repRandNum);
@@ -1085,6 +1086,15 @@ public class BehaviorProcessor {
 		
 		//System.out.println("EatingChance After: " + p.eatingChance);
 		//System.out.println("RepNum After: " + p.repRandNum);
+		
+		//Velocity
+		if(fearAmount >= .5)
+			p.velocity = 2;
+		else if(surpriseAmount == 1.0)
+			p.velocity = 0;
+		else
+			p.velocity = (int)p.mood.amount * 2;
+		//Mood as velocity
 	}
 	
 	public void emotions(Prey p){
@@ -1149,15 +1159,18 @@ public class BehaviorProcessor {
 		movable = this.findMovableLocations(pLoc);
 		
 		for(int i = 0; i < movable.size(); i++){
-			if(pLoc2.equals((Int2D)movable.get(i)) && (mood2.amount > .5))
-				rewards.add(pLoc2);
-			else if (pLoc2.equals((Int2D) movable.get(i)) && (mood2.amount < .5))
-				avoid.add(pLoc2);
-			
-			if(pLoc1.equals((Int2D)movable.get(i)) && (mood1.amount > .5))
-				rewards.add(pLoc1);
-			else if (pLoc1.equals((Int2D) movable.get(i)) && (mood1.amount < .5))
-				avoid.add(pLoc1);
+			if(mood2 != null){
+				if(pLoc2.equals((Int2D)movable.get(i)) && (mood2.amount > .5))
+					rewards.add(pLoc2);
+				else if (pLoc2.equals((Int2D) movable.get(i)) && (mood2.amount < .5))
+					avoid.add(pLoc2);
+			}
+			if(mood1 != null){
+				if(pLoc1.equals((Int2D)movable.get(i)) && (mood1.amount > .5))
+					rewards.add(pLoc1);
+				else if (pLoc1.equals((Int2D) movable.get(i)) && (mood1.amount < .5))
+					avoid.add(pLoc1);
+			}
 		}
 		
 		this.rewardProbability(rewards, newProb, oldProb, p);
