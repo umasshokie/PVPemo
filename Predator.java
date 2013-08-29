@@ -23,6 +23,7 @@ protected int eatingChance;
 private static double actualRepRate;
 private static double defaultRepRate;
 private Bag seen;
+protected double diseaseRecovery = .25;
 
 
 
@@ -78,6 +79,15 @@ private Bag seen;
 		
 		repRandNum = 1000;
 		
+		 //Chance of Disease recovery
+		 if(this.isDiseased && ((state.schedule.getTime() - diseaseTimestep) > lastMealLow)){
+			 	double d = state.random.nextInt(diseaseRandomNum);
+				double disease = d/diseaseRandomNum; 
+				
+				if(disease < diseaseRecovery)
+					this.isDiseased = false;
+		 }
+		 
 		// Timesteps since last social interaction
 		//System.out.println("Last Meal: " + lastMeal + " timesteps");
 		
@@ -89,7 +99,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 			System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", LASTMEAL: " + lastMeal);
@@ -107,7 +117,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 			System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", LASTMEAL: " + lastMeal);
@@ -125,7 +135,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 			System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", LASTMEAL: " + lastMeal);
@@ -145,7 +155,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 			this.vision(state, grid);
 		
 		}
@@ -165,7 +175,7 @@ private Bag seen;
 	}
 
 	//Method that allows Predator to kill its Prey
-	public void eat(Object p){
+	public void eat(Object p, SimState state){
 		assert (p != null);
 		
 		
@@ -173,8 +183,10 @@ private Bag seen;
 		
 			Prey prey = (Prey) p;
 			assert(prey != null);
-			if(prey.isDiseased())
+			if(prey.isDiseased()){
 				this.setDisease(true);
+				this.diseaseTimestep = state.schedule.getTime();
+			}
 			lastMeal = 0;
 			prey.stop.stop();
 			numPrey--;
@@ -262,7 +274,7 @@ private Bag seen;
 				Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
 				if(obj.getClass().equals(Prey.class)){
 					//System.out.println("Predator Ate");
-					this.eat(obj);
+					this.eat(obj, state);
 					return true;
 				}// end of if
 			}// end of for loop

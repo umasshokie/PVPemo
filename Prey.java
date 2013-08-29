@@ -26,6 +26,7 @@ private static int repAge;
 private static double defaultRepRate;
 private static double actualRepRate;
 private Bag seen;
+protected double diseaseRecovery = .25;
 
 	
 	Prey(SimState state, SparseGrid2D grid, int num){
@@ -73,7 +74,18 @@ private Bag seen;
 	@Override
 	public void step(SimState state) {
 	 super.step(state);
-	
+	 
+
+	 //Chance of Disease recovery
+	 if(this.isDiseased && ((state.schedule.getTime() - diseaseTimestep) > lastMealLow)){
+		 	double d = state.random.nextInt(diseaseRandomNum);
+			double disease = d/diseaseRandomNum; 
+			
+			if(disease < diseaseRecovery)
+				this.isDiseased = false;
+	 }
+		
+	 
 	 //Death Chance
 	 if(this.iDie(state)){
 		 	anger = new Anger(-1, this);
@@ -82,7 +94,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 		 System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", " + lastMeal);
@@ -98,7 +110,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 		 System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", " + lastMeal);
@@ -114,7 +126,7 @@ private Bag seen;
 			fear = new Fear (-1, this);
 			happy = new Happiness(1, this);
 			surprise = new Surprise(0, this);
-			mood = new Mood(anger, sad, dis, fear, happy);
+			//mood = new Mood(anger, sad, dis, fear, happy);
 		 System.out.print(", " + ID);
 			map.printMaps();
 			System.out.print(", " + lastMeal);
@@ -133,7 +145,7 @@ private Bag seen;
 		fear = new Fear (-1, this);
 		happy = new Happiness(1, this);
 		surprise = new Surprise(0, this);
-		mood = new Mood(anger, sad, dis, fear, happy);
+		//mood = new Mood(anger, sad, dis, fear, happy);
 	//End of Step, print out tests
 			System.out.print(", " + ID);
 			map.printMaps();
@@ -162,7 +174,7 @@ private Bag seen;
 			for(int i = 0; i < gridNum; i++){
 				Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
 				if(obj.getClass().equals(Food.class) && obj != null){
-					this.eat(obj);
+					this.eat(obj, state);
 					return true;
 				}// end of if
 			}// end of for loop
@@ -172,13 +184,15 @@ private Bag seen;
 	}
 
 	//Method for actually eating/ removing food from the grid.
-	public void eat(Object p){
+	public void eat(Object p, SimState state){
 		
 		//System.out.println(p);
 			Food food = (Food) p;
 			assert(food != null);
-			if(food.isDiseased())
+			if(food.isDiseased()){
 				this.setDisease(true);
+				this.diseaseTimestep = state.schedule.getTime();
+			}
 			//System.out.println(this + " ate " + p);
 			food.amount = food.amount - .9;
 			if(food.amount <0){

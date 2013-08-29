@@ -1092,8 +1092,8 @@ public class BehaviorProcessor {
 			p.velocity = 2;
 		else if(surpriseAmount == 1.0)
 			p.velocity = 0;
-		else
-			p.velocity = (int)p.mood.amount * 2;
+		//else
+			//p.velocity = (int)p.mood.amount * 2;
 		//Mood as velocity
 	}
 	
@@ -1130,7 +1130,7 @@ public class BehaviorProcessor {
 		happy2 = happy1;
 		surprise2 = surprise1;
 		pLoc2 = pLoc1;
-		mood2 = mood1;
+		//mood2 = mood1;
 		
 		anger1 = anger;
 		sadness1 = sadness;
@@ -1139,7 +1139,7 @@ public class BehaviorProcessor {
 		happy1 = happy;
 		surprise1 = surprise;
 		pLoc1 = pLoc;
-		mood1 = mood;
+		//mood1 = mood;
 				
 		
 		anger = p.anger;
@@ -1149,7 +1149,7 @@ public class BehaviorProcessor {
 		happy = p.happy;
 		surprise = p.surprise;
 		pLoc = world.getObjectLocation(p);
-		mood = p.mood;
+		//mood = p.mood;
 		
 		//If one of the two locations is a movable location, then figure out the mood
 		//Based on positivity or negativity either rewardLocation or avoidanceLocation
@@ -1158,7 +1158,7 @@ public class BehaviorProcessor {
 		Bag avoid = new Bag();
 		movable = this.findMovableLocations(pLoc);
 		
-		for(int i = 0; i < movable.size(); i++){
+		/*for(int i = 0; i < movable.size(); i++){
 			if(mood2 != null){
 				if(pLoc2.equals((Int2D)movable.get(i)) && (mood2.amount > .5))
 					rewards.add(pLoc2);
@@ -1172,7 +1172,7 @@ public class BehaviorProcessor {
 					avoid.add(pLoc1);
 			}
 		}
-		
+		*/
 		this.rewardProbability(rewards, newProb, oldProb, p);
 		this.avoidanceProbability(avoid, newProb, oldProb, p);
 	}

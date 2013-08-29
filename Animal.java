@@ -49,6 +49,8 @@ public abstract class Animal implements Steppable {
 	protected int directChangeTotal = 0;
 	protected String ID;
 	protected Bag allObjects = new Bag();
+	protected double diseaseTimestep;
+	protected int diseaseRandomNum = 100;
 	
 	protected final static void initialize(int prey, int pred, double exMap){
 		numPrey = prey;
@@ -71,6 +73,8 @@ public abstract class Animal implements Steppable {
 		//Start of every step uses default movement
 		actualProb = defaultProb;
 		vP = new VisualProcessor(state);
+		 
+		
 		
 		System.out.print(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);
 		if(numPrey == 0 || numPredator == 0){
@@ -340,7 +344,7 @@ public abstract class Animal implements Steppable {
 		}}
 		}
 	
-	protected abstract void eat(Object p);
+	protected abstract void eat(Object p, SimState state);
 	
 	protected abstract void reproduce(SimState state);
 	
